@@ -1,6 +1,6 @@
 import 'source-map-support/register'
 import * as AWS from "aws-sdk"
-import * as AWSXRay from "aws-xray-sdk"
+const AWSXRay = require('aws-xray-sdk');
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'

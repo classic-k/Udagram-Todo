@@ -6,6 +6,7 @@ import {createLogger} from "../../utils/logger"
 import { verify } from 'jsonwebtoken'
 import { JwtToken } from '../../auth/Jwt'
 
+
 const secretId = process.env.AUTH_0_SECRET_ID
 const secretField = process.env.AUTH_0_SECRET_FIELD
 const logger = createLogger("AuthLogger")
