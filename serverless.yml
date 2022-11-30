@@ -42,8 +42,8 @@ provider:
     ATTACHMENT_S3_BUCKET: udagram-todos-s3-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 500
     INDEX_NAME: Todo-${self:provider.stage}-Index
-    AUTH_0_SECRET_FIELD: field_name
-    AUTH_0_SECRET_ID: secretID
+    AUTH_0_SECRET_FIELD: Auth0Secret
+    AUTH_0_SECRET_ID: Auth0Secret-${self:provider.stage}
 custom:
   serverless-offline:
     port: 3003
@@ -71,6 +71,15 @@ functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - secretsmanager:GetSecretValue
+        Resource: !Ref Auth0Secret
+      - Effect: Allow
+        Action:
+          - kms:Decrypt
+        Resource: !GetAtt KMSKey.Arn
 
   # TODO: Configure this function - 
   # Provide iamRoleStatements property for performing Actions on DynamoDB
@@ -185,6 +194,40 @@ functions:
 
 resources:
   Resources:
+
+    KMSKey:
+      Type: AWS::KMS::Key
+      Properties:
+        Description: KMS key to encrypt Auth0 secret
+        KeyPolicy:
+          Version: '2012-10-17'
+          Id: key-default-1
+          Statement:
+            - Sid: Allow administration of the key
+              Effect: Allow
+              Principal:
+                AWS:
+                  Fn::Join:
+                  - ':'
+                  - - 'arn:aws:iam:'
+                    - Ref: AWS::AccountId
+                    - 'root'
+              Action:
+                - 'kms:*'
+              Resource: '*'
+
+    KMSKeyAlias:
+      Type: AWS::KMS::Alias
+      Properties:
+        AliasName: alias/auth0Key-${self:provider.stage}
+        TargetKeyId: !Ref KMSKey
+
+    Auth0Secret:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Name: ${self:provider.environment.AUTH_0_SECRET_ID}
+        Description: Auth0 secret
+        KmsKeyId: !Ref KMSKey
     RequestBodyValidator:
       Type: AWS::ApiGateway::RequestValidator
       Properties:

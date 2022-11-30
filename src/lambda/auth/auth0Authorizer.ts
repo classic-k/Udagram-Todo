@@ -2,20 +2,21 @@ import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
 import 'source-map-support/register'
 import * as middy from 'middy'
 import { secretsManager } from 'middy/middlewares'
-
+import {createLogger} from "../../utils/logger"
 import { verify } from 'jsonwebtoken'
 import { JwtToken } from '../../auth/Jwt'
 
 const secretId = process.env.AUTH_0_SECRET_ID
 const secretField = process.env.AUTH_0_SECRET_FIELD
-
+const logger = createLogger("AuthLogger")
 export const handler = middy(async (event: CustomAuthorizerEvent, context): Promise<CustomAuthorizerResult> => {
   try {
+    logger.info('Initiate Token auth')
     const decodedToken = verifyToken(
       event.authorizationToken,
       context.AUTH0_SECRET[secretField]
     )
-    console.log('User was authorized', decodedToken)
+    logger.info('User was authorized')
 
     const {sub} = decodedToken.payload
     return {
@@ -32,7 +33,7 @@ export const handler = middy(async (event: CustomAuthorizerEvent, context): Prom
       }
     }
   } catch (e) {
-    console.log('User was not authorized', e.message)
+    logger.error('User was not authorized', e.message)
 
     return {
       principalId: 'user',
@@ -55,11 +56,13 @@ function verifyToken(authHeader: string, secret: string): JwtToken {
     throw new Error('No authentication header')
 
   if (!authHeader.toLowerCase().startsWith('bearer '))
-    throw new Error('Invalid authentication header')
-
+  {  
+      logger.error("Invalid authentication header")
+      throw new Error('Invalid authentication header')
+}
   const split = authHeader.split(' ')
   const token = split[1]
-
+  logger.info("Return JWTToken")
   return verify(token, secret) as JwtToken
 }
 

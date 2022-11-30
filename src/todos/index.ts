@@ -1,6 +1,7 @@
 import 'source-map-support/register'
 import * as AWS from 'aws-sdk'
-const AWSXRay = require('aws-xray-sdk');
+import * as AWSXRay from "aws-xray-sdk"
+//const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
 
 const s3 = new XAWS.S3({

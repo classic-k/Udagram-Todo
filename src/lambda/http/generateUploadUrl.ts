@@ -1,13 +1,15 @@
 import 'source-map-support/register'
 import * as AWS from "aws-sdk"
+import * as AWSXRay from "aws-xray-sdk"
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 import { genAttachUrl } from '../../logics/todos'
 import { getUserId } from '../utils'
 import {createLogger} from "../../utils/logger"
-const docClient = new AWS.DynamoDB.DocumentClient()
 
+const XAWS = AWSXRay.captureAWS(AWS)
+const docClient = new XAWS.DynamoDB.DocumentClient()
 const logger = createLogger("func_genURL")
 const todosTable = process.env.TODOS_TABLE
 
