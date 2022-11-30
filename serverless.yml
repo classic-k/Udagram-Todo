@@ -1,3 +1,4 @@
+org: classicmeone
 # TODO: Change the name of the org 
 app: serverless-todo-app
 service: serverless-todo-app
@@ -24,17 +25,7 @@ provider:
     lambda: true
     apiGateway: true
   logs:
-      # Enable API Gateway logs
     restApi: true
-  
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
  
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
@@ -74,6 +65,11 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
           - secretsmanager:GetSecretValue
         Resource: !Ref Auth0Secret
       - Effect: Allow
@@ -94,6 +90,11 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
           - dynamodb:Query
           - dynamodb:Scan
           - dynamodb:GetItem
@@ -107,6 +108,11 @@ functions:
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+        - xray:PutTelemetryRecords
+        - xray:PutTraceSegments
+        Resource: "*"
       - Effect: Allow
         Action:
           - dynamodb:PutItem
@@ -134,6 +140,11 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
           - dynamodb:PutItem
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
@@ -159,6 +170,11 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
           - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
@@ -176,6 +192,11 @@ functions:
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
       - Effect: Allow
         Action:
           - dynamodb:PutItem

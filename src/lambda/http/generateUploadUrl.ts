@@ -3,10 +3,10 @@ import * as AWS from "aws-sdk"
 const AWSXRay = require('aws-xray-sdk');
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
-import { cors, httpErrorHandler } from 'middy/middlewares'
 import { genAttachUrl } from '../../logics/todos'
-import { getUserId } from '../utils'
+import { getUserId, headers } from '../utils'
 import {createLogger} from "../../utils/logger"
+import { cors } from 'middy/middlewares'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 const docClient = new XAWS.DynamoDB.DocumentClient()
@@ -21,19 +21,20 @@ export const handler = middy(
     const validTodo = await chkTodo(userId, todoId)
     if(!validTodo)
     {
-        logger.error("Invalid todo id ",todoId)
+        logger.error("Invalid todo id "+todoId)
         return {statusCode: 404,
        
             body: JSON.stringify({
-              message: "Todo not found",
+              error: "Todo not found",
             
-            })
+            }),headers
         }
     }
     let url = await genAttachUrl(userId, todoId)
-    logger.info("Todo URL generated")
+    logger.info("Todo URL generated ",url)
   return {
     statusCode: 200,
+    headers,
     body: JSON.stringify({
       uploadUrl: url
     })
@@ -54,13 +55,12 @@ export async function chkTodo(userId: string, todoId: string) {
   
     return !!todo.Item
   }
-handler
-  .use(httpErrorHandler())
-  .use(
+  handler.use(
     cors({
       credentials: true,
       origins: "*"
     })
   )
+ 
 
   

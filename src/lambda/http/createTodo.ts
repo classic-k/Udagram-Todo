@@ -4,7 +4,7 @@ import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import {createTodo} from "../../logics/todos"
-import {getUserId} from "../utils"
+import {getUserId, headers} from "../utils"
 import {createLogger as Logger} from "../../utils/logger"
 
 const logger = Logger("func_createTodo")
@@ -20,8 +20,9 @@ export const handler = middy(
         {
             return {
                 statusCode: 201,
+                headers,
                 body: JSON.stringify({
-                  newItem: newItem,
+                  item: newItem,
                   
                 })
               }

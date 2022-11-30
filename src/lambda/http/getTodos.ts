@@ -12,17 +12,19 @@ const logger = createLogger("func_getTodos")
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // Write your code here
+    logger.info("fetch todos initiated")
     try
     {
         const userId = getUserId(event)
-        logger.info("Fecth users todos: ",userId)
-        const todos = await getTodos(userId)
-        if(todos)
+        logger.info("Fecth users todos: "+ userId)
+        const items = await getTodos(userId)
+        logger.info("todos: "+ items)
+        if(items)
         {
             return {
                 statusCode: 200,
                 body: JSON.stringify({
-                  todos: todos,
+                  items
                   
                 })
             }
@@ -37,7 +39,7 @@ export const handler = middy(
     }
     catch(error)
     {
-        logger.error("Fetch todo error: ",error )
+        logger.error("Fetch todo error: "+error.message )
      return   {
             statusCode: 500,
             body: JSON.stringify({
