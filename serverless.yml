@@ -1,5 +1,4 @@
 org: classicmeone
-# TODO: Change the name of the org 
 app: serverless-todo-app
 service: serverless-todo-app
 
@@ -76,9 +75,7 @@ functions:
         Action:
           - kms:Decrypt
         Resource: !GetAtt KMSKey.Arn
-
-  # TODO: Configure this function - 
-  # Provide iamRoleStatements property for performing Actions on DynamoDB
+        
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -96,8 +93,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Query
-          - dynamodb:Scan
-          - dynamodb:GetItem
+          
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
       - Effect: Allow
         Action:
@@ -117,10 +113,6 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: Allow
-        Action:
-          - dynamodb:PutItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
      
     events:
       - http:
@@ -145,12 +137,12 @@ functions:
         Resource: "*"
       - Effect: Allow
         Action:
-          - dynamodb:PutItem
+         
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
-          - dynamodb:PutItem
+        
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
       
@@ -198,7 +190,7 @@ functions:
       - Effect: Allow
         Action:
           - s3:PutObject
-          - s3:GetObject
+         
         Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
       - Effect: Allow
         Action:
@@ -207,17 +199,10 @@ functions:
         Resource: "*"
       - Effect: Allow
         Action:
-          - dynamodb:PutItem
           - dynamodb:UpdateItem
           - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: Allow
-        Action:
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
-          - dynamodb:GetItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
-     
+      
     events:
       - http:
           method: post

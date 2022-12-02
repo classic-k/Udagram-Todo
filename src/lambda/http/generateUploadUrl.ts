@@ -3,7 +3,7 @@ import * as AWS from "aws-sdk"
 const AWSXRay = require('aws-xray-sdk');
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
-import { genAttachUrl } from '../../logics/todos'
+import { genAttachUrl } from '../../BusinessLayer/todos'
 import { getUserId, headers } from '../utils'
 import {createLogger} from "../../utils/logger"
 import { cors } from 'middy/middlewares'

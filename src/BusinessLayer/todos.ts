@@ -1,6 +1,6 @@
 import 'source-map-support/register'
 import { TodoItem } from '../models/TodoItem'
-import { Todo } from '../todos'
+import { Todo } from '../DataLayer'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'

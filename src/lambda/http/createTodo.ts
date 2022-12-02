@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import {createTodo} from "../../logics/todos"
+import {createTodo} from "../../BusinessLayer/todos"
 import {getUserId, headers} from "../utils"
 import {createLogger as Logger} from "../../utils/logger"
 
